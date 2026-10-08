@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4efe4">
+  <title>TimeBlock Mobile</title>
+  <style>
+    html,body{height:100%;margin:0;background:#f4efe4;color:#24211d;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .loading{min-height:100%;display:grid;place-items:center;padding:24px;text-align:center}
+    .card{max-width:420px;background:#fffdfa;border:1px solid #ded6c8;border-radius:16px;padding:20px;box-shadow:0 5px 20px #594d3a0a}
+    .muted{color:#706a61;font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="card">
+      <strong>Opening TimeBlock…</strong>
+      <p class="muted">Loading your mobile planner.</p>
+    </div>
+  </div>
+  <script>
+  (async function () {
+    const source = "https://zyjnpfuuoekdjuaumvpi.supabase.co/storage/v1/object/public/timeblock-web/index.html";
+    try {
+      const response = await fetch(source, { cache: "no-store", mode: "cors" });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const html = await response.text();
+      if (!html || !html.includes("TimeBlock Today")) throw new Error("Unexpected mobile app response");
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (error) {
+      document.getElementById("loading").innerHTML =
+        '<div class="card"><strong>TimeBlock could not load</strong><p class="muted">' +
+        String(error && error.message ? error.message : error) +
+        '</p><p class="muted">Refresh once. If it still fails, send Justin a screenshot.</p></div>';
+    }
+  })();
+  </script>
+</body>
+</html>
